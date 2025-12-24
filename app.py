@@ -81,6 +81,8 @@ def display_investor(investor):
     st.pyplot(fig5)
 
 
+
+
 def display_general():
     col1 , col2 , col3 , col4 = st.columns(4)
 
@@ -114,17 +116,48 @@ def display_general():
 
         # now issi genreal wale analysid mei we would show a graph of MoM investments . basiccally per month jo investments 
         # ho rahi hongi 
-    x = df.groupby(['year' , 'month'])['amount'].sum().reset_index()
-    x['year_month'] = (
+    # x = df.groupby(['year' , 'month'])['amount'].sum().reset_index()
+   
+
+    # now iss x wale df ka we can create a graph jaha pe y axis would be x[amount] and 
+    x = df.groupby(['year' , 'month'])
+    
+        
+   
+    
+    choose  =st.selectbox('Select the basis on which you want the graph' , ['Count' , 'Total Amount'])
+
+    if choose == 'Count':
+        x = x['amount'].count().reset_index()
+        st.subheader('No of investments per month')
+        # st.pyplot(fig5)
+    else:
+        x = x['amount'].sum().reset_index()
+        
+        st.subheader('Total amount of investments made per month')
+        # st.pyplot(fig
+
+    x['year_month'] =(
         x['year'].astype(str) + '-' + x['month'].astype(str).str.zfill(2)
     )
 
-    # now iss x wale df ka we can create a graph jaha pe y axis would be x[amount] and 
     fig5 , ax5 = plt.subplots()
     ax5.plot(x['year_month'] , x['amount'])
+
+    
+
+    
+
+
+
+
+    
     st.pyplot(fig5)
 
 # st.dataframe(df)
+
+
+
 st.sidebar.title('Startup Funding Analysis')
 
 option = st.sidebar.selectbox('Select an Option' , ['Overall Analysis' , 'StartUp' , 'Investor'])
@@ -148,6 +181,8 @@ else:
         # 5 investments made 
         # this function will only be called when the user presses that button
         display_investor(invst)
+
+        
 
 
 
