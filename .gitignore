@@ -1,0 +1,3 @@
+# this is  the file which we use to keep the file name which we dont want to track
+streamlit_basics.py
+.DS_Store
