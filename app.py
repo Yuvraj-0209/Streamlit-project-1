@@ -1,7 +1,8 @@
 import streamlit as st
-
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from google import genai
 
 st.set_page_config(layout ='wide')
 
@@ -42,7 +43,7 @@ def display_investor(investor):
 
         st.subheader('Sectors invested in')
 
-        fig1 , ax1 = plt.subplots()
+        fig1 , ax1 = plt.subplots()  
         ax1.pie(v_series , labels = v_series.index)
         st.pyplot(fig1)
 
@@ -155,6 +156,31 @@ def display_general():
     st.pyplot(fig5)
 
 # st.dataframe(df)
+    
+def display_startup(startup):
+    st.header(startup)
+
+    # genai.configure(api_key =os.getenv("GOOGLE_API_KEY"))
+
+    # The client gets the API key from the environment variable `GEMINI_API_KEY`.
+    import os
+    st.write("API KEY LOADED:", bool(os.getenv("GOOGLE_API_KEY")))
+    client = genai.Client(
+        api_key=os.environ["GOOGLE_API_KEY"]
+    )
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash", contents=f"""
+Explain the startup {startup} in simple terms.
+Include:
+- What the startup does
+- Who founded it
+- Why it is popular
+"""
+    )
+    st.write(response.text)
+
+
 
 
 
@@ -163,15 +189,18 @@ st.sidebar.title('Startup Funding Analysis')
 option = st.sidebar.selectbox('Select an Option' , ['Overall Analysis' , 'StartUp' , 'Investor'])
 
 if option=='Overall Analysis':
-    st.title('Overall Analysis')
+    st.title('Overall Analysis') 
     but0 = st.sidebar.button('Show overall')
     
     if but0:
         display_general()
 elif option =='StartUp':
-    st.sidebar.selectbox('Select Startup' ,  sorted(df['startup'].unique()))
+    startup =st.sidebar.selectbox('Select Startup' ,  sorted(df['startup'].unique()))
     bt1 = st.sidebar.button('Find Startup Details')
+    
     st.title('Startup Analysis')
+    if bt1:
+        display_startup(startup)
 else:
     invst =st.sidebar.selectbox('Select Investor' , sorted(set(df['investors'].str.split(',').sum())))
     bt2 = st.sidebar.button('Find Investor Details')
